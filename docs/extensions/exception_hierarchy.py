@@ -21,6 +21,23 @@ class ExceptionHierarchyDirective(Directive):
     has_content = True
 
     def run(self):
+        """
+        .. exception_hierarchy:
+           :title: Exception Hierarchy
+
+           This is the
+        exception hierarchy for all exceptions that are raised by the Python
+        standard library.
+
+           .. code-block: none
+
+              BaseException
+                 +--
+        SystemExit
+                 +-- KeyboardInterrupt
+                 +-- GeneratorExit
+        ... etc. ...  (see source)
+        """
         self.assert_has_content()
         node = exception_hierarchy("\n".join(self.content))
         self.state.nested_parse(self.content, self.content_offset, node)
@@ -28,5 +45,9 @@ class ExceptionHierarchyDirective(Directive):
 
 
 def setup(app):
+    """
+    A directive that creates a hierarchical list of exceptions and their sub-
+    exceptions.
+    """
     app.add_node(exception_hierarchy, html=(visit_exception_hierarchy_node, depart_exception_hierarchy_node))
     app.add_directive("exception_hierarchy", ExceptionHierarchyDirective)

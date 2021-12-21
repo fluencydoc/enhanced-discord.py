@@ -112,6 +112,24 @@ class Music(commands.Cog):
     @yt.before_invoke
     @stream.before_invoke
     async def ensure_voice(self, ctx):
+        """
+        Ensure that bot is connected to a voice channel.
+
+         If not, raise an error.
+        Parameters: 
+             ctx (discord.ext.commands.Context): The context of the
+        command in which this function is being called
+
+         Returns: 
+             None if the
+        bot is connected to a voice channel, otherwise raises an exception and
+        prints out message saying that it's not connected to one
+
+        Raises:
+        commands.CommandError: When author isn't connected to a voice channel or
+        when author isn't in any channels at all (in which case they can't be
+        moved)
+        """
         if ctx.voice_client is None:
             if ctx.author.voice:
                 await ctx.author.voice.channel.connect()

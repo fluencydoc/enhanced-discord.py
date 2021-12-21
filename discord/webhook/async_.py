@@ -582,6 +582,18 @@ class _FriendlyHttpAttributeErrorHelper:
     __slots__ = ()
 
     def __getattr__(self, attr):
+        """
+        A partial webhook state that allows for a parent to be set.
+
+        This is useful
+        when a :class:`Webhook` needs to be used as the context manager of another
+        object, such as an instance of :class:`.AudioState`, which requires the use
+        of a :class:`Webhook`.
+        """
+        """
+        This function is a partial webhook state. It allows you to get the parent
+        of this object, but not any other attributes.
+        """
         raise AttributeError("PartialWebhookState does not support http methods.")
 
 
@@ -603,6 +615,11 @@ class _WebhookState:
         return None
 
     def store_user(self, data):
+        """
+        Store a user in the database.
+
+        :param data: The user's data.
+        """
         if self._parent is not None:
             return self._parent.store_user(data)
         # state parameter is artificial
@@ -614,6 +631,13 @@ class _WebhookState:
 
     @property
     def http(self):
+        """
+        :returns:
+            :class:`~http.client.HTTPConnection` if this object has a
+        parent, otherwise an instance of :class:`~http.client.HTTPConnection`.
+        If this object does not have a parent, calling this method will raise an
+        exception that is documented in the section below titled "Error Classes".
+        """
         if self._parent is not None:
             return self._parent.http
 
@@ -622,6 +646,18 @@ class _WebhookState:
         return _FriendlyHttpAttributeErrorHelper()
 
     def __getattr__(self, attr):
+        """
+        A partial webhook state that allows for a parent to be set.
+
+        This is useful
+        when a :class:`Webhook` needs to be used as the context manager of another
+        object, such as an instance of :class:`.AudioState`, which requires the use
+        of a :class:`Webhook`.
+        """
+        """
+        This function is a partial webhook state. It allows you to get the parent
+        of this object, but not any other attributes.
+        """
         if self._parent is not None:
             return getattr(self._parent, attr)
 
@@ -1208,6 +1244,12 @@ class Webhook(BaseWebhook):
         return Webhook(data=data, session=self.session, token=self.auth_token, state=self._state)
 
     def _create_message(self, data):
+        """
+        Create a :class:`WebhookMessage` from the data provided.
+
+        :param data: The
+        message's raw JSON data.
+        """
         state = _WebhookState(self, parent=self._state)
         # state may be artificial (unlikely at this point...)
         channel = self.channel or PartialMessageable(state=self._state, id=int(data["channel_id"]))  # type: ignore

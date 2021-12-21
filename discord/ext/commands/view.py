@@ -66,6 +66,13 @@ class StringView:
         self.index = self.previous
 
     def skip_ws(self):
+        """
+        Sets the index to the next non-whitespace character in the buffer.
+
+        :param
+        self: The current instance.
+        :type self: BufferReader
+        """
         pos = 0
         while not self.eof:
             try:
@@ -81,6 +88,13 @@ class StringView:
         return self.previous != self.index
 
     def skip_string(self, string):
+        """
+        Skip the string if it is equal to the current buffer.
+
+        :param str string:
+        The string to skip.
+        :returns bool -- True if skipped, False otherwise.
+        """
         strlen = len(string)
         if self.buffer[self.index : self.index + strlen] == string:
             self.previous = self.index
@@ -101,6 +115,13 @@ class StringView:
         return result
 
     def get(self):
+        """
+        Get the next item in a buffer.
+
+        :param self: The buffer to get from.
+        :type
+        self: Buffer
+        """
         try:
             result = self.buffer[self.index + 1]
         except IndexError:
@@ -111,6 +132,19 @@ class StringView:
         return result
 
     def get_word(self):
+        """
+        Get the next word from the buffer.
+
+        :Parameters:
+            - `self` (`Buffer`):
+        The buffer instance to get a word from.
+
+          *Returns*: A string containing
+        the next word in the buffer, or an empty string if there are no more words
+        in this buffer.
+
+          *Return type*: str | unicode | NoneType
+        """
         pos = 0
         while not self.eof:
             try:
@@ -126,6 +160,16 @@ class StringView:
         return result
 
     def get_quoted_word(self):
+        """
+        Get the next word from the raw string data provided by
+        :attr:`Stream.raw_string`.
+
+        The word may be quoted and may contain any
+        number of quotes inside, either ' or ", and an escaped quote character can
+        be used to embed a quote character inside the string. The quotes must match
+        however, either ' must be closed with ', or ". If there is no closing quote
+        then an error will be raised.
+        """
         current = self.current
         if current is None:
             return None

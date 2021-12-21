@@ -58,7 +58,19 @@ class RadioSetting extends Setting {
 
 }
 
+/**
+* Toggles the `data-test` attribute on and off.
+* @param {boolean} set -
+Whether to set or remove the attribute.
+ */
 function getRootAttributeToggle(attributeName, valueName) {
+  /**
+  * Sets or removes a data attribute on the document element.
+  * @param
+  {string} attributeName The name of the data attribute to set or remove.
+  *
+  @param {boolean} set Whether to set or remove the data attribute.
+   */
   function toggleRootAttribute(set) {
     if (set) {
       document.documentElement.setAttribute(`data-${attributeName}`, valueName);
@@ -69,6 +81,12 @@ function getRootAttributeToggle(attributeName, valueName) {
   return toggleRootAttribute;
 }
 
+/**
+* Sets the document's data-theme attribute to either 'light' or 'dark',
+depending on the value of `value`.
+* @param {string} value The value to
+set. Must be one of: "light", "dark", or "automatic".
+ */
 function setTheme(value) {
   if (value === 'automatic') {
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {

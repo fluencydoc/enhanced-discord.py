@@ -1036,6 +1036,14 @@ class ConnectionState:
         self.dispatch("guild_stickers_update", guild, before_stickers, guild.stickers)
 
     def _get_create_guild(self, data):
+        """
+        Gets a :class:`Guild` from cache or creates it if it doesn't exist.
+
+        This
+        function is identical to ``_get_create_guild`` except that
+        unavailable
+        guilds are not set to available in the cache.
+        """
         if data.get("unavailable") is False:
             # GUILD_CREATE with unavailable in the response
             # usually means that the guild has become available
@@ -1063,6 +1071,29 @@ class ConnectionState:
         return request.get_future()
 
     async def _chunk_and_dispatch(self, guild, unavailable):
+        """
+        _chunk_and_dispatch(self, guild, unavailable)
+
+        Chunks the given guild and
+        dispatches either `guild_available` or `guild_join` depending on whether
+        the chunk was received after a :meth:`Client.request_offline_members`.
+        - Parameters: 
+                - **guild** (:class:`Guild <discord.Guild>`,
+        optional): The guild to chunk and dispatch for. Defaults to ``None`` which
+        means all joined guilds are dispatched with either event.
+                -
+        **unavailable** (``bool``, optional): If ``True`` it means that this is not
+        an actual join but instead a synthetic one due to
+        :meth:`Client.request_offline-members`. Defaults to ``False`` which
+        indicates an actual join happened in practice..
+
+            This function is
+        useful for when you need some kind of 'join' event dispatched regardless of
+        whether we actually joined or if we were already there beforehand due to
+        offline members being requested from us by Discord's servers before they
+        even send us the GUILD CREATE payload indicating that they've created our
+        respective server/guild object in their database.
+        """
         try:
             await asyncio.wait_for(self.chunk_guild(guild), timeout=60.0)
         except asyncio.TimeoutError:

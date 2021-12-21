@@ -34,6 +34,39 @@ if TYPE_CHECKING:
 
 class _FakeBool:
     def __repr__(self):
+        """
+        Sets the permission of a role in a channel.
+
+        :param everyone: Whether or
+        not to set the permission for all users. Defaults to ``False``.
+        :param
+        users: A list of :class:`User` that should have access to the command/the
+        bot's functionality in this channel, or ``None`` if it's unspecified (which
+        is default). If specified, it will override
+        :attr:`~PermissionsOverwrite.everyone`. Defaults to ``None``.
+        """
+        """
+        Create a new :class:`Permissions` object with the given values for each
+        permission.
+
+        Everyone: boolean, optional (default = False)
+            Set to True
+        to enable the everyone permission.
+
+            This is a shortcut for
+        adding/removing all other permissions at once and should be used instead of
+        them for performance reasons.
+
+            .. note ::
+
+                If this is set to
+        ``True``, all other parameters will be ignored as they would not change
+        anything.
+
+        Users: list of :class:`User`, optional (default = [])  # no
+        default value in function signature!  # noqafrom typing import
+        List\nusers=List[User]\nroles=List[Role]\neveryone=bool
+        """
         return "True"
 
     def __eq__(self, other):

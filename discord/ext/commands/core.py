@@ -198,6 +198,12 @@ def get_signature_parameters(
 
 
 def wrap_callback(coro):
+    """
+    A decorator that wraps a coroutine and allows it to raise CommandError
+    without
+    needing to be decorated in order to allow for the chaining of
+    commands.
+    """
     @functools.wraps(coro)
     async def wrapped(*args, **kwargs):
         try:
@@ -214,6 +220,30 @@ def wrap_callback(coro):
 
 
 def hooked_wrapped_callback(command, ctx, coro):
+    """
+    Hooks the wrapped coroutine `coro` to the command.
+
+    The following things
+    are done:
+
+        * If a command is disabled due to throttling, then users of
+    this method will not be able to run it. This includes the owner of the bot,
+    as well as users with Manage Messages permission. This check is performed
+    first so that it can be bypassed by using
+    :attr:`~discord.ext.commands.Context.is_owner` or
+    :meth:`~discord.ext..commands..ContextBaseMixin._can_run`.
+        * The
+    ``on_command_error`` and ``on_command_completion`` events are dispatched
+    before and after running coro with context in respective order (the former
+    before calling on error handlers). If any event handler raises an
+    exception, then further processing stops and CommandInvokeError is raised
+    from this function's caller's perspective; no error handlers will be
+    invoked for such exceptions (this includes all global error handlers). Note
+    that if these events aren't handled specially by user code, they behave
+    exactly like other commands' hooks - they only get called if there was no
+    exception raised from their child coroutines/tasks during normal execution
+    flow
+    """
     @functools.wraps(coro)
     async def wrapped(*args, **kwargs):
         try:

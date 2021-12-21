@@ -60,6 +60,12 @@ __all__ = (
 
 
 def _create_value_cls(name, comparable):
+    """
+    Creates a namedtuple class with the given name and fields.
+
+    The new class
+    is used to represent values that are comparable, but not hashable.
+    """
     cls = namedtuple("_EnumValue_" + name, "name value")
     cls.__repr__ = lambda self: f"<{name}.{self.name}: {self.value!r}>"
     cls.__str__ = lambda self: f"{name}.{self.name}"
@@ -137,6 +143,12 @@ class EnumMeta(type):
         return types.MappingProxyType(cls._enum_member_map_)
 
     def __call__(cls, value):
+        """
+        Return an instance of the class that has the same value as ``value``.
+
+        If
+        no such instance exists, raise a :exc:`ValueError`.
+        """
         try:
             return cls._enum_value_map_[value]
         except (KeyError, TypeError):

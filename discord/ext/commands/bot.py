@@ -282,6 +282,26 @@ class BotBase(GroupMixin):
         await self.create_slash_commands()
 
     async def create_slash_commands(self):
+        """
+        Create slash commands for the application.
+
+        :param commands: The list of
+        :class:`~steam.ext.commands.Command` objects to create slash commands for,
+        or ``None`` to create global (non-guild) commands only if no guilds are
+        provided via ``slash_command_guilds`` and no guilds are available from the
+        bot's API key (i.e., it is a user account). If a command has its
+        :attr:`~steam.ext.commands.CommandOptionsMixinBase#hidden` attribute set to
+        ``True``, it will not be created regardless of whether any other conditions
+        pass or fail; this allows you to have certain hidden commands that can
+        still be invoked by name in chat messages without having them show up in
+        your help message(s).
+        # A concise reStructuredText docstring for the above
+        function that explains what the code does without using general terms:
+        :param http: The HTTP client interface object used by this application
+        instance (usually an instance of :class:`.HTTPClient`, but can also be
+        something else as long as it implements at least one method from that
+        class); if not specified, defaults to an instance of :class:`.HTTP
+        """
         commands: defaultdict[Optional[int], List[EditApplicationCommand]] = defaultdict(list)
         for command in self.commands:
             if command.hidden or (command.slash_command is None and not self.slash_commands):

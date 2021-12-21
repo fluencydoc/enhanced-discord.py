@@ -9,6 +9,10 @@ class MyClient(discord.Client):
         print("------")
 
     async def on_member_join(self, member):
+        """
+        When a member joins the server, send them a message welcoming them to the
+        server.
+        """
         guild = member.guild
         if guild.system_channel is not None:
             to_send = f"Welcome {member.mention} to {guild.name}!"

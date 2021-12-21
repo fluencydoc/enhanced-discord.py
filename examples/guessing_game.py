@@ -9,6 +9,10 @@ class MyClient(discord.Client):
         print("------")
 
     async def on_message(self, message):
+        """
+        This function responds to a message that contains the command '$guess' by
+        letting the user guess a number between 1 and 10.
+        """
         # we do not want the bot to reply to itself
         if message.author.id == self.user.id:
             return

@@ -6,6 +6,9 @@ from discord.ext import commands
 
 class MyContext(commands.Context):
     async def tick(self, value):
+        """
+        React to a message with a tick mark if value is true, cross mark otherwise.
+        """
         # reacts to the message with an emoji
         # depending on whether value is True or False
         # if its True, it'll add a green check mark

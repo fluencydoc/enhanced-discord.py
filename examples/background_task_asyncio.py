@@ -14,6 +14,10 @@ class MyClient(discord.Client):
         print("------")
 
     async def my_background_task(self):
+        """
+        Sends a message to the channel every minute with the number of minutes that
+        have passed.
+        """
         await self.wait_until_ready()
         counter = 0
         channel = self.get_channel(1234567)  # channel ID goes here

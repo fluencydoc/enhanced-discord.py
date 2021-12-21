@@ -500,6 +500,27 @@ class Streaming(BaseActivity):
 
     @property
     def twitch_name(self):
+        """
+        :class:`~.Streaming`
+        =====================
+
+        .. rst-class: stream-box
+        .. container-compat
+
+                This object represents a Twitch stream. It is
+        usually embedded in other objects, such as :attr:`.Guild.channels`, or sent
+        via :meth:`.ClientUser.send_message`.
+
+                The following properties are
+        present on this object (readonly):
+
+                .. autoattribute :: twitch_name
+        If provided, the twitch name of the user streaming. This corresponds to the
+        ``large_image`` key of the :attr:`assets <StreamingAssets>` dictionary if
+        it starts with ``twitch:\"``. Typically set by the Discord client and not
+        modified afterwards by bots or users without special permissions to do so
+        for others' channels (i am looking at you, ryry013).
+        """
         """Optional[:class:`str`]: If provided, the twitch name of the user streaming.
 
         This corresponds to the ``large_image`` key of the :attr:`Streaming.assets`

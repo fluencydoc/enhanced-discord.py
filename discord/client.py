@@ -743,6 +743,20 @@ class Client:
 
     @status.setter
     def status(self, value):
+        """
+        Sets the bot's status.
+
+        :param value: The new status to set. Must be either
+        :class:`Status.offline`, a member of :class:`Status`, or an object that
+        derives from :class:`Status`.
+        """
+        """
+        Sets the bot's status.
+
+        :param value: The new status to set. If a
+        :class:`Status` object is passed, it will be converted to its corresponding
+        string representation before being sent to Discord.
+        """
         if value is Status.offline:
             self._connection._status = "invisible"
         elif isinstance(value, Status):

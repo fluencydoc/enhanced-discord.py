@@ -97,6 +97,11 @@ class Sidebar {
 
 }
 
+/**
+* @param {number} bottomHeightThreshold The height threshold for the bottom
+of the page.
+* @returns {HTMLElement} The current section element.
+ */
 function getCurrentSection() {
   let currentSection;
   if (window.scrollY + window.innerHeight > bottomHeightThreshold) {

@@ -48,6 +48,12 @@ def visit_attributetabletitle_node(self, node):
 
 
 def visit_attributetablebadge_node(self, node):
+    """
+    .. function_name: visit_attributetablebadge_node
+       :synopsis: Creates a
+    span element with the class py-attribute-table-badge and adds it to the
+    body.
+    """
     attributes = {
         "class": "py-attribute-table-badge",
         "title": node["badge-type"],
@@ -90,6 +96,15 @@ class PyAttributeTable(SphinxDirective):
     option_spec = {}
 
     def parse_name(self, content):
+        """
+        Parse a name into its module and object names.
+
+        Given a string like
+        ``some.module:name``, return the module name (e.g., ``some.module``) and
+        the object name (e.g., ``name``). If no module is given, use the current
+        document's current module as default; if there is no current document
+        either, raise an error.
+        """
         path, name = _name_parser_regex.match(content).groups()
         if path:
             modulename = path.rstrip(".")
@@ -140,6 +155,29 @@ class PyAttributeTable(SphinxDirective):
 
 
 def build_lookup_table(env):
+    """
+    Build a lookup table mapping class names to their child attributes.
+
+    :param
+    env: The Sphinx environment.
+    :returns: A dictionary mapping class names to
+    lists of attribute strings.
+
+        For example, ``{"Foo": ["bar", "baz"]}``
+    indicates that the ``Foo`` class has two child attributes named ``bar`` and
+    ``baz``, respectively. If a given object type does not have any children
+    (e.g., functions), it will be absent from 
+        the returned dictionary
+    entirely; if a given object type has no children with documentation pages
+    (e.g., undocumented 
+        functions), its list of children will be empty but
+    present in the returned dictionary regardless of whether there is
+    documentation for those objects or not (for consistency).
+
+         This
+    function is used by :func`build_reference`. It should generally not need to
+    be called directly by anything else.
+    """
     # Given an environment, load up a lookup table of
     # full-class-name: objects
     result = {}
@@ -169,6 +207,15 @@ TableElement = namedtuple("TableElement", "fullname label badge")
 
 
 def process_attributetable(app, doctree, fromdocname):
+    """
+    Builds a table of class attributes, grouped by type.
+
+    :param lookup: A
+    dictionary mapping fully qualified Python names to
+    :class:`~sphinxcontrib.napoleon.docstring.GoogleDocstring` objects
+    :type
+    lookup: dict(str, sphinxcontrib-napoleon_google_docstring)
+    """
     env = app.builder.env
 
     lookup = build_lookup_table(env)
@@ -190,6 +237,14 @@ def process_attributetable(app, doctree, fromdocname):
 
 
 def get_class_results(lookup, modulename, name, fullname):
+    """
+    Get a table of attributes and methods for the given class.
+
+    :param lookup:
+    A mapping from fully qualified names to members.
+    :type lookup: dict[str,
+    list[str]]
+    """
     module = importlib.import_module(modulename)
     cls = getattr(module, name)
 
@@ -245,6 +300,35 @@ def get_class_results(lookup, modulename, name, fullname):
 
 
 def class_results_to_node(key, elements):
+    """
+    Returns a reStructuredText node containing an attribute table for the given
+    key and elements.
+
+    The attribute table will have one column with a title
+    that is the given key,
+    and each row will contain an element from `elements`
+    as its first item.
+    If any of those elements has a badge associated with it,
+    then the badge is used in place of the element's label.
+
+    :param str key:
+    The name to use for this column's title (the same string passed to
+    `attributetabletitle`).
+        This should be something like "Classes" or
+    "Functions".
+        It can also be None if no title should be displayed at all
+    (but in that case you must pass an empty string as `title`).
+
+        .. note:
+    If you want to display two columns without titles, then pass ``None`` twice
+    instead of passing ``""`` twice!
+
+            For example:
+    ``attributetablecolumn(None, None)`` vs. ``attributetablecolumn("", "")`` .
+    In addition to being more concise than using two separate calls to this
+    function (which would look like this): ::
+    attributetablecolumn("", "") #
+    """
     title = attributetabletitle(key, key)
     ul = nodes.bullet_list("")
     for element in elements:
@@ -261,6 +345,10 @@ def class_results_to_node(key, elements):
 
 
 def setup(app):
+    """
+    Adds a directive to the Sphinx documentation system that allows for the
+    creation of tables with badges.
+    """
     app.add_directive("attributetable", PyAttributeTable)
     app.add_node(attributetable, html=(visit_attributetable_node, depart_attributetable_node))
     app.add_node(attributetablecolumn, html=(visit_attributetablecolumn_node, depart_attributetablecolumn_node))

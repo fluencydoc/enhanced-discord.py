@@ -770,6 +770,12 @@ class SyncWebhook(BaseWebhook):
         return SyncWebhook(data=data, session=self.session, token=self.auth_token, state=self._state)
 
     def _create_message(self, data):
+        """
+        Create a :class:`SyncWebhookMessage` from the given data.
+
+        :param data: The
+        raw message data to create the message from.
+        """
         state = _WebhookState(self, parent=self._state)
         # state may be artificial (unlikely at this point...)
         channel = self.channel or PartialMessageable(state=self._state, id=int(data["channel_id"]))  # type: ignore

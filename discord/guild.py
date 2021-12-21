@@ -1642,6 +1642,16 @@ class Guild(Hashable):
         data = await self._state.http.get_all_guild_channels(self.id)
 
         def convert(d):
+            """
+            Convert a dictionary to an integration object.
+
+            :param dict d: The
+            dictionary to convert.
+            :returns IntegrationIntegrationFactory factory, str
+            type_name: A tuple containing the factory and the name of the type of
+            integration that was converted. If no matching integration could be found,
+            both values will be None instead.
+            """
             factory, ch_type = _guild_channel_factory(d["type"])
             if factory is None:
                 raise InvalidData("Unknown channel type {type} for channel ID {id}.".format_map(d))
@@ -2160,6 +2170,16 @@ class Guild(Hashable):
         data = await self._state.http.get_all_integrations(self.id)
 
         def convert(d):
+            """
+            Convert a dictionary to an integration object.
+
+            :param dict d: The
+            dictionary to convert.
+            :returns IntegrationIntegrationFactory factory, str
+            type_name: A tuple containing the factory and the name of the type of
+            integration that was converted. If no matching integration could be found,
+            both values will be None instead.
+            """
             factory, _ = _integration_factory(d["type"])
             if factory is None:
                 raise InvalidData("Unknown integration type {type!r} for integration ID {id}".format_map(d))

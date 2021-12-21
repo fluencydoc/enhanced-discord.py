@@ -7,6 +7,9 @@ class MyClient(discord.Client):
         print("------")
 
     async def on_message(self, message):
+        """
+        Deletes the bot's own message.
+        """
         if message.content.startswith("!deleteme"):
             msg = await message.channel.send("I will delete myself now...")
             await msg.delete()

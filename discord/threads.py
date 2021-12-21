@@ -195,6 +195,13 @@ class Thread(Messageable, Hashable):
         self.invitable = data.get("invitable", True)
 
     def _update(self, data):
+        """
+        Updates the channel object with data from the API.
+
+        :param data: The JSON
+        dict received from Discord
+        :type  data: dict
+        """
         try:
             self.name = data["name"]
         except KeyError:

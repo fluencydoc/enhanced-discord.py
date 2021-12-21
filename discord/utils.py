@@ -732,6 +732,14 @@ def remove_markdown(text: str, *, ignore_links: bool = True) -> str:
     """
 
     def replacement(match):
+        """
+        Replaces markdown-style links with the corresponding HTML link.
+
+        :param str
+        text: The text to replace links in.
+        :returns str: The input string, with
+        all markdown-style links replaced by HTML links.
+        """
         groupdict = match.groupdict()
         return groupdict.get("url", "")
 
@@ -769,6 +777,14 @@ def escape_markdown(text: str, *, as_needed: bool = False, ignore_links: bool = 
     if not as_needed:
 
         def replacement(match):
+        """
+        Replaces markdown-style links with the corresponding HTML link.
+
+        :param str
+        text: The text to replace links in.
+        :returns str: The input string, with
+        all markdown-style links replaced by HTML links.
+        """
             groupdict = match.groupdict()
             is_url = groupdict.get("url")
             if is_url:

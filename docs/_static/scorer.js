@@ -12,6 +12,13 @@ function escapeRegex(e) {
 // if something has been scored already I'd rather sort it to the bottom
 const beenScored = new Set();
 
+/**
+* Finds the first occurrence of a string in another string.
+* @param
+{string} haystack The string to search in.
+* @param {string} needle The
+substring to search for.
+ */
 function __score(haystack, regex) {
     let match = regex.exec(haystack);
     if (match == null) {

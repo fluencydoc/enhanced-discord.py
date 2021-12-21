@@ -801,6 +801,24 @@ class BadUnionArgument(UserInputError):
         self.errors: List[CommandError] = errors
 
         def _get_name(x):
+            """
+            Returns the name of an object.
+
+            If the object has a __name__ attribute,
+            this is returned.
+            Otherwise, if it has a __origin__ attribute (i.e., it's a
+            type annotation),
+                its repr is returned;
+            otherwise, its class name is
+            returned.
+
+            Args:
+                x: The object whose name to return
+
+            Returns: A string
+            containing the object's name or type annotation (if applicable).  If
+            neither applies, returns x's class' name as a string.
+            """
             try:
                 return x.__name__
             except AttributeError:

@@ -169,6 +169,27 @@ class Paginator:
 
     @property
     def pages(self):
+        """
+        :class:`~discord.ext.commands.HelpFormatter`\s help output for a command or
+        cog with subcommands and groups is
+        a list of the available subcommands and
+        their descriptions, like so:\n
+        +-------+----------------------------------------------------------------------------------+
+        | Value | Description
+        |
+        +=======+==================================================================================+
+        | "foo" | The description of what this command does, some kind of elaborate
+        explanation    |
+        |       | that makes you go "ohhhhhhhh" (if you don't know
+        what foo does then run          |  # noqae  # noqae  # noqae   # noqae   #
+        noqae   ...and if you do know then hooray!)     ...and if you do know then
+        hooray!)     ...and if you do know then hooray!)      ...and if you do know
+        then hooray!)      ...and if you do know then hooray!)       ....or maybe
+        just continue reading?         ....or maybe just continue reading?
+        ....or maybe just continue reading?           .....no seriously, I have
+        literally zero idea what foo does             .....no seriously, I have
+        literally
+        """
         """List[:class:`str`]: Returns the rendered list of pages."""
         # we have more than just the prefix in our current page
         if len(self._current_page) > (0 if self.prefix is None else 1):
@@ -176,6 +197,30 @@ class Paginator:
         return self._pages
 
     def __repr__(self):
+        """
+        Paginator(prefix, suffix, linesep=os.linesep)
+
+        A class that paginates text
+        (usually to stdout).
+
+        :param str prefix: A string that will be prepended to
+        every line in the output. This is used for indentation and/or ANSI escape
+        codes. Defaults to "".
+
+            :param str suffix: A string that will be
+        appended to every line in the output. This is used for indentation and/or
+        ANSI escape codes. Defaults to "".
+
+                :param os linesep: The value of
+        ``os.linesep`` determines what end-of-line character should be used when
+        writing out pages (see below). Defaults to ``None`` which means no
+        translation takes place on write out; iow this uses whatever your local
+        operating system's end-of-line character is ("\n" on UNIX, "\r\n" on
+        Windows etc.). If you want a specific end of line then set this accordingly
+        e.g.: if you want pages written with just LF ("\n") then pass in an empty
+        string as ``suffix`` and set this parameter equal to an empty string too;
+        if you want pages written with just CRL
+        """
         fmt = "<Paginator prefix: {0.prefix!r} suffix: {0.suffix!r} linesep: {0.linesep!r} max_size: {0.max_size} count: {0._count}>"
         return fmt.format(self)
 
@@ -192,6 +237,13 @@ class _HelpCommandImpl(Command):
         self._injected = inject
 
     async def prepare(self, ctx):
+        """
+        Prepares the help command for a context by setting up its injected
+        attributes and processing the given subcommands.
+
+        :param ctx: The context
+        to prepare the help command for.
+        """
         self._injected = injected = self._original.copy()
         injected.context = ctx
         self.callback = injected.command_callback
@@ -206,6 +258,10 @@ class _HelpCommandImpl(Command):
         await super().prepare(ctx)
 
     async def _parse_arguments(self, ctx):
+        """
+        :param ctx: The context in which the command is being invoked under. This
+        is a :class:`discord.ext.commands.Context`.
+        """
         # Make the parser think we don't have a cog so it doesn't
         # inject the parameter into `ctx.args`.
         original_cog = self.cog
@@ -220,6 +276,13 @@ class _HelpCommandImpl(Command):
 
     @property
     def clean_params(self):
+        """
+        Returns a copy of the dictionary with all keys except for the first one.
+        :param dict params: The dictionary to be copied.
+        :returns: A copy of
+        ``params`` without its first key, if it has at least one key. Otherwise,
+        returns ``params`` unchanged.
+        """
         result = self.params.copy()
         try:
             del result[next(iter(result))]
@@ -229,6 +292,10 @@ class _HelpCommandImpl(Command):
             return result
 
     def _inject_into_cog(self, cog):
+        """
+        Adds the command to the bot and automatically injects it into a cog if one
+        is found with a matching name.
+        """
         # Warning: hacky
 
         # Make the cog think that get_commands returns this command
@@ -251,6 +318,22 @@ class _HelpCommandImpl(Command):
         self.cog = cog
 
     def _eject_cog(self):
+        """
+        Ejects the current cog.
+
+        This will revert back to the original methods that
+        were in place before a cog was
+        added. It also removes any aliases and
+        checks if there are any commands left in
+        the cog so it doesn't leave
+        pointless commands behind.
+
+        Parameters:
+            ctx (Context): The invocation
+        context used to invoke this command.
+
+            Returns: None
+        """
         if self.cog is None:
             return
 
@@ -383,6 +466,36 @@ class HelpCommand:
 
     @property
     def invoked_with(self):
+        """
+        Returns the command name that triggered this invocation.
+
+        If the help
+        command was used regularly then this returns
+        the
+        :attr:`Context.invoked_with` attribute. Otherwise, if
+        it the help command
+        was called using :meth:`Context.send_help`
+        then it returns the internal
+        command name of the help command.
+
+         Parameters
+         ------------
+            ctx:
+        Optional[:class:`.Context`] = None, optional (default=None) # The context
+        to use for determining what invoked this method call; if not provided,
+        defaults to ``self`` or ``ctx`` depending on whether or not a context is
+        available in which case it will be set to ``self`` by default instead of
+        ``ctx`` as would otherwise be expected when invoking methods from within a
+        decorator function passed as an argument to another function being
+        decorated by `@command()
+        <discordpyextendedcommands._commanddecorator_.Command>`.
+
+         Returns
+        --------- # This section is copied from
+        discordpyextendedcommands._converterfuncs_.Converter#__init__ and modified
+        slightly so that only one line needs to be changed per converter type
+        rather than having multiple lines
+        """
         """Similar to :attr:`Context.invoked_with` except properly handles
         the case where :meth:`Context.send_help` is used.
 
@@ -472,6 +585,16 @@ class HelpCommand:
 
     @cog.setter
     def cog(self, cog):
+        """
+        Sets the cog of this command.
+
+        :param cog: The new cog to set. If ``None``,
+        then it will be unset and the command will have no owner.
+        """
+        """
+        :param cog: The cog to set.
+        :type cog: :class:`Cog` or None
+        """
         # Remove whatever cog is currently valid, if any
         self._command_impl._eject_cog()
 
@@ -643,6 +766,9 @@ class HelpCommand:
 
     @_not_overriden
     async def on_help_command_error(self, ctx, error):
+        """
+        This function does nothing and propagates to the default error handlers.
+        """
         """|coro|
 
         The help command's error handler, as specified by :ref:`ext_commands_error_handler`.

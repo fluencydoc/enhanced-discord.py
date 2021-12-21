@@ -369,6 +369,11 @@ class View:
             self.__timeout_task = loop.create_task(self.__timeout_task_impl())
 
     def _dispatch_timeout(self):
+        """
+        :param self: The object that this method is bound to.
+        :type self:
+        :class:`discord.ext.ui.View`
+        """
         if self.__stopped.done():
             return
 
@@ -470,6 +475,12 @@ class ViewStore:
         return list(views.values())
 
     def __verify_integrity(self):
+        """
+        Removes all views that are finished from the dictionary of views.
+
+        :param
+        self: The instance of the class to operate on.
+        """
         to_remove: List[Tuple[int, Optional[int], str]] = []
         for (k, (view, _)) in self._views.items():
             if view.is_finished():

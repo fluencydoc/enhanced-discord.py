@@ -41,6 +41,12 @@ class DetailsDirective(Directive):
     has_content = True
 
     def run(self):
+        """
+        .. details(summary, text)
+            This is a function that will create a
+        reStructuredText block with the class 'details' and add the summary as an
+        h5 tag.
+        """
         set_classes(self.options)
         self.assert_has_content()
 
@@ -57,6 +63,9 @@ class DetailsDirective(Directive):
 
 
 def setup(app):
+    """
+    Adds a `details` node for use in ``.. details:`` directives.
+    """
     app.add_node(details, html=(visit_details_node, depart_details_node))
     app.add_node(summary, html=(visit_summary_node, depart_summary_node))
     app.add_directive("details", DetailsDirective)

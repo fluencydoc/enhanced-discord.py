@@ -83,6 +83,23 @@ class TicTacToe(discord.ui.View):
 
     # This method checks for the board winner -- it is used by the TicTacToeButton
     def check_board_winner(self):
+        """
+        This function checks the board to see if a player has won or if there is a
+        tie.
+        It does this by checking each row, column and diagonal for 3 in a row
+        of either X or O.
+        If no one has won, it checks to see if there are any
+        empty spaces left on the board and returns None.
+        Otherwise it returns the
+        winner (X or O) as well as returning Tie when all spaces are filled but
+        neither player has won.
+
+            :param self: The current state of the game
+        being played
+
+            :returns: Returns None when no one wins, X when X wins, O
+        when O wins and Tie for a draw between both players
+        """
         for across in self.board:
             value = sum(across)
             if value == 3:

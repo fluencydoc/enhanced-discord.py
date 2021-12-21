@@ -596,6 +596,13 @@ PO = TypeVar("PO", bound="PermissionOverwrite")
 
 
 def _augment_from_permissions(cls):
+    """
+    Augments the class with a set of properties that correspond to each valid
+    permission name and
+    alias.
+
+    :param cls: The class to augment.
+    """
     cls.VALID_NAMES = set(Permissions.VALID_FLAGS)
     aliases = set()
 

@@ -158,6 +158,12 @@ class VoiceState:
 
 
 def flatten_user(cls):
+    """
+    Flattens the User object into a regular class.
+
+    This is done to allow for
+    easier access of user attributes and methods.
+    """
     for attr, value in itertools.chain(BaseUser.__dict__.items(), User.__dict__.items()):
         # ignore private/special methods
         if attr.startswith("_"):
@@ -178,6 +184,10 @@ def flatten_user(cls):
             # It probably breaks something in Sphinx.
             # probably a member function by now
             def generate_function(x):
+                """
+                Generate a function that can be used as an attribute of the user object.
+                :param x: The name of the function to generate.
+                """
                 # We want sphinx to properly show coroutine functions as coroutines
                 if inspect.iscoroutinefunction(value):
 

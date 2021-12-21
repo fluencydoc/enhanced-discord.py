@@ -8,6 +8,9 @@ class MyClient(discord.Client):
         print("------")
 
     async def on_message(self, message):
+        """
+        Sends a message then edits it to say something else.
+        """
         if message.content.startswith("!editme"):
             msg = await message.channel.send("10")
             await asyncio.sleep(3.0)

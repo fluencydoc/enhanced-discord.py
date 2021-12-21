@@ -83,6 +83,32 @@ __all__ = (
 
 
 def _get_from_guilds(bot, getter, argument):
+    """
+    Returns the first object found from the bot's guilds that has a given
+    attribute with a given value.
+
+    :param getter: The name of the method to use
+    to find an attribute of an object in :attr:`bot.guilds`.
+        For example,
+    if you want to find a role with name ``name``, you would set this parameter
+    to ``role`` and pass in ``name`` as the second parameter.
+        This is
+    because calling :code:`getattr(obj, 'role')('name')` will return either
+    None or a Role object whose name is equal to ``name``.
+
+        .. note ::
+    If you are using Python 3.8+, it is recommended that instead of passing in
+    this argument (which must be passed), you instead use `dataclasses
+    <python/cpython/blob/3.8/Lib/_collections_abc.py#L145-L148>`_\ -style
+    annotations on your function definition like so:
+
+                def
+    get_from_guilds(bot, getter): # type: ignore # pragma: no cover  # mypy
+    doesn't support dataclasses yet :(
+                    ...
+
+            This
+    """
     result = None
     for guild in bot.guilds:
         result = getattr(guild, getter)(argument)
@@ -194,6 +220,16 @@ class MemberConverter(IDConverter[discord.Member]):
     """
 
     async def query_member_named(self, guild, argument):
+        """
+        Finds a member by name or nickname in the specified guild.
+
+        :param
+        discord.Guild guild: The guild to search for the member in.
+        :param str
+        argument: The name or nickname of the user to find, as well as optionally
+        their discriminator if it is included (the part after "#"). If this is not
+        found, then an error will be raised instead.
+        """
         cache = guild._state.member_cache_flags.joined
         if len(argument) > 5 and argument[-5] == "#":
             username, _, discriminator = argument.rpartition("#")
@@ -204,6 +240,32 @@ class MemberConverter(IDConverter[discord.Member]):
             return discord.utils.find(lambda m: m.name == argument or m.nick == argument, members)
 
     async def query_member_by_id(self, bot, guild, user_id):
+        """
+        .. function: query_member_by_id(bot, guild, user_id)
+
+            Queries a member
+        by their ID from the given guild.
+            If the member is not found in the
+        cache then it will be fetched using :meth:`Guild.fetch_member`.
+
+            This
+        function can be used to quickly get a member object for someone without
+        having to call :meth:`Client.fetch_user`.
+
+            Parameters
+            ----------
+        bot: BotType
+                    The bot object that this command is being called
+        through (i.e., ``self`` in a command). This parameter must have been
+        automatically provided to this decorator when it was invoked on the
+        method/coroutine/etc that this function replaces or decorates itself with
+        (see :class:`discordjspy.ext.commands.Command` for more details). Note that
+        if you are using an asynchronous context manager via ``await`` instead of
+        manually invoking ``bot`` then you must explicitly pass your own instance
+        of your bot class as this argument rather than relying on discordjspy's
+        internal mechanism which only works synchronously and inside of
+        coroutines/generators/etc but not async code
+        """
         ws = bot._get_websocket(shard_id=guild.shard_id)
         cache = guild._state.member_cache_flags.joined
         if ws.is_ratelimited():
@@ -333,6 +395,19 @@ class PartialMessageConverter(Converter[discord.PartialMessage]):
 
     @staticmethod
     def _get_id_matches(ctx, argument):
+        """
+        Parse a message ID and return the guild ID, channel ID, and message ID.
+        Parameters:
+
+            ctx (discord.ext.commands.Context): The context of the
+        invocation to retrieve the guild from if applicable
+            argument (str): The
+        string that represents a message or link to be parsed for information
+        Returns:
+
+            tuple[int]: A tuple containing three integers representing
+        the guild id, channel id, and message id respectively in that order
+        """
         id_regex = re.compile(r"(?:(?P<channel_id>[0-9]{15,20})-)?(?P<message_id>[0-9]{15,20})$")
         link_regex = re.compile(
             r"https?://(?:(ptb|canary|www)\.)?discord(?:app)?\.com/channels/"
@@ -622,6 +697,14 @@ class ColourConverter(Converter[discord.Colour]):
     RGB_REGEX = re.compile(r"rgb\s*\((?P<r>[0-9]{1,3}%?)\s*,\s*(?P<g>[0-9]{1,3}%?)\s*,\s*(?P<b>[0-9]{1,3}%?)\s*\)")
 
     def parse_hex_number(self, argument):
+        """
+        Converts a hexadecimal colour argument to a :class:`discord.Color`.
+
+        The
+        argument can be either the three digit form (``#RGB``) or the six digit
+        form (``#RRGGBB``). If it is neither, then an error is raised. The value
+        must also be between 0 and 0xFFFFFF inclusive.
+        """
         arg = "".join(i * 2 for i in argument) if len(argument) == 3 else argument
         try:
             value = int(arg, base=16)
@@ -633,6 +716,14 @@ class ColourConverter(Converter[discord.Colour]):
             return discord.Color(value=value)
 
     def parse_rgb_number(self, argument, number):
+        """
+        Parse a colour argument.
+
+        :param str argument: The name of the colour that
+        was passed to the function.
+        :param str number: A string representing a
+        number, either as an integer or with a percentage sign at the end.
+        """
         if number[-1] == "%":
             value = int(number[:-1])
             if not (0 <= value <= 100):

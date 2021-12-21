@@ -277,6 +277,10 @@ class VoiceClient(VoiceProtocol):
         return self._state.user
 
     def checked_add(self, attr, value, limit):
+        """
+        Adds a value to an attribute and ensures that the sum is between 0 and
+        limit.
+        """
         val = getattr(self, attr)
         if val + value > limit:
             setattr(self, attr, 0)
@@ -529,6 +533,33 @@ class VoiceClient(VoiceProtocol):
     # audio related
 
     def _get_voice_packet(self, data):
+        """
+        Encrypts a voice data packet for the :meth:`VoiceClient.send_audio` method.
+        Parameters
+        ----------
+        data: bytes-like object or bytearray, optional
+        (default=None)
+            The raw PCM voice data to be sent. This is not required
+        if ``mode`` is set to ``'xsalsa20_poly1305'`` and will be ignored if it is.
+        .. note ::
+
+                If this argument is omitted, an empty packet will be
+        sent! This can cause issues with the gateway and should only be done when
+        the user has disconnected their client from Discord's servers already in
+        advance of disconnecting from your server/bot as well!
+
+                If you wish
+        to send nothing at all, consider using
+        :meth:`discord.VoiceClient.stop_playing`.
+
+            .. warning ::
+
+                Do
+        not provide this argument yourself unless you know what you're doing;
+        instead use :meth:`discord.VoiceClient._create_ffmpeg_player`. See below
+        for more information on why we need this parameter at all times despite it
+        being marked as optional above! :)  # noQA: E501  # noQA: E501
+        """
         header = bytearray(12)
 
         # Formulate rtp header

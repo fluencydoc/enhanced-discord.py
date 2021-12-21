@@ -349,6 +349,10 @@ texinfo_documents = [
 
 
 def setup(app):
+    """
+    Sets the intersphinx mapping for Python 3 documentation to
+    `docs/source/py3k` and sets the Discord invite link.
+    """
     if app.config.language == "ja":
         app.config.intersphinx_mapping["py"] = ("https://docs.python.org/ja/3", None)
         app.config.html_context["discord_invite"] = "https://discord.gg/TvqYBrGXEm"

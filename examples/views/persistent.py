@@ -36,6 +36,12 @@ class PersistentViewBot(commands.Bot):
         self.persistent_views_added = False
 
     async def on_ready(self):
+        """
+        Logs into the client and prints a message when it is ready.
+
+        :param self:
+        The Discord client object.
+        """
         if not self.persistent_views_added:
             # Register the persistent view for listening here.
             # Note that this does not send the view to any message.

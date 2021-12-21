@@ -205,6 +205,23 @@ class ReactionIterator(_AsyncIterator[Union["User", "Member"]]):
             raise NoMoreItems()
 
     async def fill_users(self):
+        """
+        Retrieves a list of users who reacted to the message with the given emoji.
+        :param channel_id: The ID of the channel where this reaction occurred.
+        :param message_id: The ID of the message where this reaction occurred.
+        [optional] :param limit: Maximum number of results to return (Default 100,
+        Max 1000). Requires user context.
+        [optional] :param after: Object ID for an
+        existing message that defines a place in time, and will only return
+        messages created before or at that id (Default None). Requires user
+        context.
+
+            Returns a list containing objects representing each user who
+        reacted with this emoji on this specific message in order from most recent
+        reactions first to oldest reactions last based on when they reacted using
+        their own unique User object IDs as keys for retrieval later if needed by
+        calling get_user() or similar methods on those objects respectively.
+        """
         # this is a hack because >circular imports<
         from .user import User
 
@@ -337,6 +354,15 @@ class HistoryIterator(_AsyncIterator["Message"]):
         return r > 0
 
     async def fill_messages(self):
+        """
+        Fills the :class:`MessagePaginator` with messages from a channel.
+
+        If
+        ``retrieve`` is specified, it will be used as an argument to `len()`. If
+        ``reverse`` is specified, it will reverse the order of all results. If
+        ``filter`` is specified, it will be called for each message and if its
+        return value evaluates to False, that message won't be added.
+        """
         if not hasattr(self, "channel"):
             # do the required set up
             channel = await self.messageable._get_channel()
@@ -427,6 +453,14 @@ class AuditLogIterator(_AsyncIterator["AuditLogEntry"]):
                 self._filter = lambda m: int(m["id"]) > self.after.id
 
     async def _before_strategy(self, retrieve):
+        """
+        Retrieve audit logs from the guild.
+
+        :param retrieve: The number of entries
+        to retrieve. Defaults to 100 if not specified.
+        :type retrieve: int,
+        optional
+        """
         before = self.before.id if self.before else None
         data: AuditLogPayload = await self.request(
             self.guild.id, limit=retrieve, user_id=self.user_id, action_type=self.action_type, before=before
@@ -440,6 +474,14 @@ class AuditLogIterator(_AsyncIterator["AuditLogEntry"]):
         return data.get("users", []), entries
 
     async def _after_strategy(self, retrieve):
+        """
+        Retrieve audit logs from the guild.
+
+        :param retrieve: The number of entries
+        to retrieve. If ``None``, retrieves all entries available. Defaults to
+        ``None``.
+        :type retrieve: :class:`int`, optional
+        """
         after = self.after.id if self.after else None
         data: AuditLogPayload = await self.request(
             self.guild.id, limit=retrieve, user_id=self.user_id, action_type=self.action_type, after=after
@@ -470,6 +512,13 @@ class AuditLogIterator(_AsyncIterator["AuditLogEntry"]):
         return r > 0
 
     async def _fill(self):
+        """
+        :param self:
+        :type self:
+        :param retrieve_user_data=True,
+        retrieve_channel_data=True, retrieve_invite_data=False,
+        retrieve_webhooks=False):
+        """
         from .user import User
 
         if self._get_retrieve():
@@ -573,6 +622,21 @@ class GuildIterator(_AsyncIterator["Guild"]):
         return Guild(state=self.state, data=data)
 
     async def fill_guilds(self):
+        """
+        Fills the guilds list with Guild objects from the retrieve list.
+
+        :param
+        retrieve: The data to fill the guilds list with.
+        :type retrieve: List[dict]
+        :param limit: The maximum number of elements to add to the guilds list,
+        defaults to None. If None, all elements will be added (default is
+        ``None``).
+            :type limit: int or None, optional
+
+            :returns bool --
+        True if there are more elements in your dataset that can be retrieved and
+        False otherwise.
+        """
         if self._get_retrieve():
             data = await self._retrieve_guilds(self.retrieve)
             if self.limit is None or len(data) < 100:
@@ -642,6 +706,14 @@ class MemberIterator(_AsyncIterator["Member"]):
         return r > 0
 
     async def fill_members(self):
+        """
+        Fills the members list with Member objects from the given guild.
+
+        :param
+        int retrieve: The number of members to retrieve.
+        :param discord.Guild
+        guild: The guild to get the member from.
+        """
         if self._get_retrieve():
             after = self.after.id if self.after else None
             data = await self.get_members(self.guild.id, self.retrieve, after)

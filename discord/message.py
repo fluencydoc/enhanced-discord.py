@@ -103,6 +103,16 @@ __all__ = (
 
 
 def convert_emoji_reaction(emoji):
+    """
+    Converts an emoji into a format that can be sent to Discord.
+
+    :param
+    discord.PartialReaction or str emoji: The reaction to convert.
+    :returns
+    str: A string in the form of "<name>:<id>" if it is a
+    :class:`discord.PartialReaction`, otherwise just returns the original
+    string (if it was already in that form).
+    """
     if isinstance(emoji, Reaction):
         emoji = emoji.emoji
 
@@ -497,6 +507,19 @@ class MessageReference:
 
 
 def flatten_handlers(cls):
+    """
+    .. function: flatten_handlers(cls)
+
+        This is a decorator that converts
+    the class into a :class:`FlatPacketClass`.
+        It does this by moving all
+    methods starting with ``_handle_`` and not ending in ``__`` to class
+    attributes.
+        The method ``member`` is stored last.
+
+        :param cls: The
+    class to be converted.
+    """
     prefix = len("_handle_")
     handlers = [
         (key[prefix:], value)
@@ -1030,6 +1053,16 @@ class Message(Hashable):
 
     @utils.cached_slot_property("_cs_system_content")
     def system_content(self):
+        """
+        :class:`str`: A property that returns the content that is rendered
+        regardless of the :attr:`Message.type`.
+
+                In the case of
+        :attr:`MessageType.default` and :attr:`MessageType.reply`,
+                this
+        just returns the regular :attr:`Message.content`. Otherwise this
+        returns an English message denoting the contents of the system message.
+        """
         r""":class:`str`: A property that returns the content that is rendered
         regardless of the :attr:`Message.type`.
 
